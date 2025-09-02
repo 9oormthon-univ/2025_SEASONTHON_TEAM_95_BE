@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class AiDetectionService {
 
-    public Double detect(String s3Url) {
-        return 0.0;
-    }
+     Double detect(String s3Url) {
+         return 0.0;
+     }
 
 }

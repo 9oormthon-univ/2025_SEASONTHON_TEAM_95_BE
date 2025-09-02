@@ -1,9 +1,11 @@
 package org.seasonthon.fakecheck.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.seasonthon.fakecheck.dto.AnalysisDashboardResponse;
 import org.seasonthon.fakecheck.dto.AnalysisResponse;
 import org.seasonthon.fakecheck.service.AnalysisService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -17,9 +19,16 @@ public class AnalysisController {
 
     private final AnalysisService analysisService;
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<AnalysisResponse> analysis(@RequestPart MultipartFile image) {
         AnalysisResponse response = analysisService.analyze(image);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/dashboards")
+    public ResponseEntity<AnalysisDashboardResponse> getDashboard() {
+        AnalysisDashboardResponse response = analysisService.getDashboardStats();
 
         return ResponseEntity.ok(response);
     }
