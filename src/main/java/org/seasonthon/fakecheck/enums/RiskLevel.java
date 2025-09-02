@@ -7,10 +7,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum RiskLevel {
 
-    SAFE(70.0),
-    CAUTION(40.0),
-    DANGER(0.0);
+    SAFE("안전", 70.0),
+    CAUTION("주의", 40.0),
+    DANGER("위험", 0.0);
 
+    private final String description;
     private final Double value;
 
     public static RiskLevel fromProbability(Double probability) {
