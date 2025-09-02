@@ -24,10 +24,7 @@ public class Analysis {
     private Long id;
 
     @Column(nullable = false)
-    private Double aiProbability;
-
-    @Column(nullable = false)
-    private String originalUrl;
+    private Double fakeProbability;
 
     @Column(nullable = false)
     private String s3Url;
@@ -40,32 +37,24 @@ public class Analysis {
 
     @Builder(access = AccessLevel.PRIVATE)
     private Analysis(
-            Double aiProbability,
-            String originalUrl,
+            Double fakeProbability,
             String s3Url,
             RiskLevel riskLevel,
             LocalDateTime createTime
     ) {
-        this.aiProbability = aiProbability;
-        this.originalUrl = originalUrl;
+        this.fakeProbability = fakeProbability;
         this.s3Url = s3Url;
         this.riskLevel = riskLevel;
         this.createTime = createTime;
     }
 
-    public static Analysis create(String originalUrl, String s3Url) {
-       return Analysis.builder()
-                .aiProbability(0.0)
-                .originalUrl(originalUrl)
+    public static Analysis create(String s3Url, Double fakeProbability) {
+        return Analysis.builder()
+                .fakeProbability(fakeProbability)
                 .s3Url(s3Url)
-                .riskLevel(RiskLevel.SAFE)
+                .riskLevel(RiskLevel.fromProbability(fakeProbability))
                 .createTime(LocalDateTime.now())
                 .build();
-    }
-
-    public void registerAnalysisResult(Double aiProbability) {
-        this.aiProbability = aiProbability;
-        this.riskLevel = RiskLevel.fromProbability(aiProbability);
     }
 
 }
