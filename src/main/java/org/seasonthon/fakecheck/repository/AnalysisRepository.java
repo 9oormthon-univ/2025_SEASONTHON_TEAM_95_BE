@@ -7,10 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
     // 오늘 전체 검사 수
-    Long countByCreateTimeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
+    Long countByCreatedAtBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     // 오늘 특정 위험도별 카운트
-    Long countByCreateTimeBetweenAndRiskLevel(
+    Long countByCreatedAtBetweenAndRiskLevel(
             LocalDateTime startDateTime,
             LocalDateTime endDateTime,
             RiskLevel riskLevel

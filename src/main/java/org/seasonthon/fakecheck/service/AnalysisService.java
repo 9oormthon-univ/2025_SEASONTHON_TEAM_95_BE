@@ -43,9 +43,9 @@ public class AnalysisService {
         // 오늘 23시 59분 59초 (또는 내일 0시 0분 0초 직전)
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
 
-        Long todayScansCount = analysisRepository.countByCreateTimeBetween(startOfDay, endOfDay);
-        Long todayDangerCount = analysisRepository.countByCreateTimeBetweenAndRiskLevel(startOfDay, endOfDay, DANGER);
-        Long todayCautionCount = analysisRepository.countByCreateTimeBetweenAndRiskLevel(startOfDay, endOfDay, CAUTION);
+        Long todayScansCount = analysisRepository.countByCreatedAtBetween(startOfDay, endOfDay);
+        Long todayDangerCount = analysisRepository.countByCreatedAtBetweenAndRiskLevel(startOfDay, endOfDay, DANGER);
+        Long todayCautionCount = analysisRepository.countByCreatedAtBetweenAndRiskLevel(startOfDay, endOfDay, CAUTION);
         Long totalDangerCount = analysisRepository.countByRiskLevel(DANGER);
 
         return AnalysisDashboardResponse.builder()
