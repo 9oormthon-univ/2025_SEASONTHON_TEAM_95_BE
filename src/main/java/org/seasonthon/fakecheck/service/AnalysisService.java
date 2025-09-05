@@ -11,6 +11,7 @@ import org.seasonthon.fakecheck.domain.Analysis;
 import org.seasonthon.fakecheck.dto.AIDetectionRequest;
 import org.seasonthon.fakecheck.dto.AnalysisDashboardResponse;
 import org.seasonthon.fakecheck.dto.AnalysisResponse;
+import org.seasonthon.fakecheck.dto.Last7DaysAnalysisResponse;
 import org.seasonthon.fakecheck.repository.AnalysisRepository;
 import org.seasonthon.fakecheck.s3.S3Provider;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,25 @@ public class AnalysisService {
                 .todayDangerCount(todayDangerCount)
                 .todayCautionCount(todayCautionCount)
                 .totalDangerCount(totalDangerCount)
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public Last7DaysAnalysisResponse getLastSevenDaysAnalysis() {
+        // 최근 7일 시작: 7일 전 0시 0분 0초
+        LocalDateTime startOf7Days = LocalDateTime.of(LocalDate.now().minusDays(6), LocalTime.MIN);
+
+        // 오늘 23시 59분 59초 (또는 내일 0시 0분 0초 직전)
+        LocalDateTime endOfToday = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+
+        Long last7DaysScansCount = analysisRepository.countByCreatedAtBetween(startOf7Days, endOfToday);
+        Long last7DaysDangerCount = analysisRepository.countByCreatedAtBetweenAndRiskLevel(startOf7Days, endOfToday, DANGER);
+        Long last7DaysCautionCount = analysisRepository.countByCreatedAtBetweenAndRiskLevel(startOf7Days, endOfToday, CAUTION);
+
+        return Last7DaysAnalysisResponse.builder()
+                .last7DaysScansCount(last7DaysScansCount)
+                .last7DaysDangerCount(last7DaysDangerCount)
+                .last7DaysCautionCount(last7DaysCautionCount)
                 .build();
     }
 
