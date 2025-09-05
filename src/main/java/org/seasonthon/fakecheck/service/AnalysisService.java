@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.seasonthon.fakecheck.domain.Analysis;
+import org.seasonthon.fakecheck.dto.AIDetectionRequest;
 import org.seasonthon.fakecheck.dto.AnalysisDashboardResponse;
 import org.seasonthon.fakecheck.dto.AnalysisResponse;
 import org.seasonthon.fakecheck.repository.AnalysisRepository;
@@ -26,8 +27,8 @@ public class AnalysisService {
 
     public AnalysisResponse analyze(MultipartFile image) {
         String s3Url = s3Provider.uploadImage(image);
-
-        AnalysisResponse response = aiDetectionService.detect(s3Url);
+        AIDetectionRequest request = new AIDetectionRequest(s3Url);
+        AnalysisResponse response = aiDetectionService.detect(request);
 
         Analysis analysis = Analysis.create(s3Url, response.aiProbability(), response.realProbability(), response.conclusion());
 
