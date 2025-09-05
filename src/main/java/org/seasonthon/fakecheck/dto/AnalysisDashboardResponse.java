@@ -4,8 +4,10 @@ import lombok.Builder;
 
 @Builder
 public record AnalysisDashboardResponse(
-        Long dailyScansCount,
-        Long fakeDetectedCount
+        Long todayScansCount,
+        Long todayDangerCount,
+        Long todayCautionCount,
+        Long totalDangerCount
 ) {
 
 }

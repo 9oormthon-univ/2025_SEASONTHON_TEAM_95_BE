@@ -4,56 +4,43 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.seasonthon.fakecheck.BaseEntity;
 import org.seasonthon.fakecheck.enums.RiskLevel;
 
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Analysis {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Analysis extends BaseEntity {
 
     @Column(nullable = false)
-    private Double fakeProbability;
+    private Double aiProbability;
+
+    @Column(nullable = false)
+    private Double realProbability;
 
     @Column(nullable = false)
     private String s3Url;
 
+    @Column(nullable = false)
+    private String conclusion;
+
     @Enumerated(EnumType.STRING)
     private RiskLevel riskLevel;
 
-    @Column(nullable = false)
-    private LocalDateTime createTime;
-
-    @Builder(access = AccessLevel.PRIVATE)
-    private Analysis(
-            Double fakeProbability,
-            String s3Url,
-            RiskLevel riskLevel,
-            LocalDateTime createTime
-    ) {
-        this.fakeProbability = fakeProbability;
-        this.s3Url = s3Url;
-        this.riskLevel = riskLevel;
-        this.createTime = createTime;
-    }
-
-    public static Analysis create(String s3Url, Double fakeProbability) {
+    public static Analysis create(String s3Url, Double aiProbability, Double realProbability, String conclusion) {
         return Analysis.builder()
-                .fakeProbability(fakeProbability)
+                .aiProbability(aiProbability)
+                .realProbability(realProbability)
+                .conclusion(conclusion)
                 .s3Url(s3Url)
-                .riskLevel(RiskLevel.fromProbability(fakeProbability))
-                .createTime(LocalDateTime.now())
+                .riskLevel(RiskLevel.fromProbability(realProbability))
                 .build();
     }
 

@@ -1,5 +1,8 @@
 package org.seasonthon.fakecheck.service;
 
+import static org.seasonthon.fakecheck.enums.RiskLevel.CAUTION;
+import static org.seasonthon.fakecheck.enums.RiskLevel.DANGER;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -7,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.seasonthon.fakecheck.domain.Analysis;
 import org.seasonthon.fakecheck.dto.AnalysisDashboardResponse;
 import org.seasonthon.fakecheck.dto.AnalysisResponse;
-import org.seasonthon.fakecheck.enums.RiskLevel;
 import org.seasonthon.fakecheck.repository.AnalysisRepository;
 import org.seasonthon.fakecheck.s3.S3Provider;
 import org.springframework.stereotype.Service;
@@ -25,17 +27,13 @@ public class AnalysisService {
     public AnalysisResponse analyze(MultipartFile image) {
         String s3Url = s3Provider.uploadImage(image);
 
-        Double fakeProbability = aiDetectionService.detect(s3Url);
+        AnalysisResponse response = aiDetectionService.detect(s3Url);
 
-        Analysis analysis = Analysis.create(s3Url, fakeProbability);
+        Analysis analysis = Analysis.create(s3Url, response.aiProbability(), response.realProbability(), response.conclusion());
+
         Long analysisId = analysisRepository.save(analysis).getId();
 
-        return AnalysisResponse.builder()
-                .analysisId(analysisId)
-                .riskLevel(analysis.getRiskLevel().getDescription())
-                .fakeProbability(fakeProbability)
-                .imageUrl(s3Url)
-                .build();
+        return response.withAnalysisId(analysisId);
     }
 
     @Transactional(readOnly = true)
@@ -45,17 +43,16 @@ public class AnalysisService {
         // 오늘 23시 59분 59초 (또는 내일 0시 0분 0초 직전)
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
 
-        // Daily Scans (오늘 검사 수)
-        Long dailyScansCount = analysisRepository.countByCreateTimeBetween(startOfDay, endOfDay);
-
-        // Fake Detected (오늘 가짜 판별 수)
-        Long fakeDetectedCount = analysisRepository.countByCreateTimeBetweenAndRiskLevel(
-                startOfDay, endOfDay, RiskLevel.DANGER
-        );
+        Long todayScansCount = analysisRepository.countByCreateTimeBetween(startOfDay, endOfDay);
+        Long todayDangerCount = analysisRepository.countByCreateTimeBetweenAndRiskLevel(startOfDay, endOfDay, DANGER);
+        Long todayCautionCount = analysisRepository.countByCreateTimeBetweenAndRiskLevel(startOfDay, endOfDay, CAUTION);
+        Long totalDangerCount = analysisRepository.countByRiskLevel(DANGER);
 
         return AnalysisDashboardResponse.builder()
-                .dailyScansCount(dailyScansCount)
-                .fakeDetectedCount(fakeDetectedCount)
+                .todayScansCount(todayScansCount)
+                .todayDangerCount(todayDangerCount)
+                .todayCautionCount(todayCautionCount)
+                .totalDangerCount(totalDangerCount)
                 .build();
     }
 

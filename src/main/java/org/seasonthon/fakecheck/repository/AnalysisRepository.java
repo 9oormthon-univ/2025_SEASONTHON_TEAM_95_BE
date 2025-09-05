@@ -16,4 +16,6 @@ public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
             RiskLevel riskLevel
     );
 
+    Long countByRiskLevel(RiskLevel riskLevel);
+
 }
