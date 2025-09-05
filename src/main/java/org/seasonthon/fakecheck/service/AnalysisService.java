@@ -34,7 +34,7 @@ public class AnalysisService {
 
         Long analysisId = analysisRepository.save(analysis).getId();
 
-        return response.withAnalysisId(analysisId);
+        return response.withAnalysisIdAndRiskLevel(analysisId, analysis.getRiskLevel().getDescription());
     }
 
     @Transactional(readOnly = true)

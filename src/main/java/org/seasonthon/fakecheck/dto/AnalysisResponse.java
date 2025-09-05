@@ -9,19 +9,21 @@ public record AnalysisResponse(
         String imageUrl,
         Double aiProbability,
         Double realProbability,
+        String riskLevel,
         String conclusion,
         List<String> evidences
 ) {
 
-    // analysisId를 추가한 새로운 인스턴스 반환
-    public AnalysisResponse withAnalysisId(Long analysisId) {
+    public AnalysisResponse withAnalysisIdAndRiskLevel(Long analysisId, String riskLevel) {
         return new AnalysisResponse(
                 analysisId,
                 this.imageUrl,
                 this.aiProbability,
                 this.realProbability,
+                riskLevel,
                 this.conclusion,
                 this.evidences
         );
     }
+
 }
