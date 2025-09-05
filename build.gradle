@@ -50,11 +50,6 @@ dependencies {
     implementation 'software.amazon.awssdk:sts:2.20.28'
     implementation 'software.amazon.awssdk:auth:2.20.28'
 
-
-    // Spring AI (starter + BOM 관리)
-    implementation "org.springframework.ai:spring-ai-starter-model-openai"
-    implementation platform("org.springframework.ai:spring-ai-bom:1.1.0-SNAPSHOT")
-
 }
 
 tasks.named('test') {
